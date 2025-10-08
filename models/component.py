@@ -29,8 +29,5 @@ class Component(BaseModel):
     
     def get_qr_filename(self):
         return self.qr_filename
-    
-class ComponentRequest(BaseModel):
-    name: str
-    photo: str
+
 

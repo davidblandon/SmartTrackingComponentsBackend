@@ -1,18 +1,33 @@
 import os
 import qrcode
 import hashlib
+from fastapi import UploadFile, File, Form, HTTPException
 from database.collections import product_collection 
 from bson import ObjectId
 from models.component import Component
-from models.component import ComponentRequest
+
 
 QR_FOLDER = "static/qrcodes/"
 os.makedirs(QR_FOLDER, exist_ok=True)
 
-def create_component(component_request: ComponentRequest) -> Component:
+PHOTOS_FOLDER = "static/components_photos/"
+os.makedirs(PHOTOS_FOLDER, exist_ok=True)
+
+
+def create_component(name: str, Uploaded_file=None) -> Component:
+
+    if Uploaded_file:
+        photo_filename = Uploaded_file.filename
+        photo_path = os.path.join(PHOTOS_FOLDER, photo_filename)
+        with open(photo_path, "wb") as buffer:
+            buffer.write(Uploaded_file.file.read())
+
+    else:
+        return HTTPException(status_code=400, detail="Photo is required")
+
     component_doc = {
-        "name": component_request.name,
-        "photo": component_request.photo,
+        "name": name,
+        "photo": photo_path,
     }
     result = product_collection.insert_one(component_doc)
     component_id_str = str(result.inserted_id)
