@@ -1,6 +1,14 @@
 from fastapi import FastAPI
 from routes.component import router
 import uvicorn
+import os
+from fastapi.staticfiles import StaticFiles
+
+app = FastAPI()
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+COMPONENT_PHOTOS_DIR = os.path.join(BASE_DIR, "static", "components_photos")
+app.mount("/components_photos", StaticFiles(directory=COMPONENT_PHOTOS_DIR), name="components_photos")
 
 app = FastAPI()
 
