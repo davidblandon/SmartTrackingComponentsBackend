@@ -1,18 +1,48 @@
 from fastapi import APIRouter, HTTPException, UploadFile, File
-from controllers import component
-
+from models.component import Component
+from typing import List,Optional, Union
+from fastapi import UploadFile, File, Form
+from controllers import component as component_controller
+from utils.nature import NatureEnum
+from datetime import datetime
+from fastapi import Form
 
 router = APIRouter()
 
 
 
-@router.post("/composant/")
-def create_component(name : str, Uploaded_file: UploadFile = File(...)):
-    return component.create_component(name, Uploaded_file)
+@router.post("/component/")
+def create_component_route(name : str, nature: NatureEnum ,Uploaded_file: UploadFile = File(...)):
+    return component_controller.create_component(name, nature, Uploaded_file)
 
-@router.get("/composant/{component_qr}")
-def get_component(component_qr: str):
-    component_new = component.get_component(component_qr)
+@router.get("/components", response_model=List[Component])
+def get_all_components():
+    components_list = component_controller.get_all_components()
+    
+    if not components_list:
+        raise HTTPException(status_code=404, detail="No components found")
+    
+    return components_list
+
+@router.get("/component/{component_qr}")
+def get_component_route(component_qr: str):
+    component_new = component_controller.get_component(component_qr)
     if not component_new:
         raise HTTPException(status_code=404, detail="Component not found")
     return component_new
+
+@router.put("/component/{component_id}")
+def update_component_route(component_id: str,
+    name: Optional[str] = Form(None), 
+    nature: Optional[NatureEnum] = Form(None), 
+    operating_hours: Optional[float] = Form(None), 
+    commissioning_date: Optional[datetime] = Form(None), decommissioning_date: Optional[datetime] = Form(None),
+    uploaded_file: Optional[Union[UploadFile, str]] = File(None)):
+
+
+    return component_controller.update_component(component_id,name, nature, operating_hours, commissioning_date, decommissioning_date, uploaded_file)
+
+@router.delete("/component/{component_id}")
+def delete_component_route(component_id: str):
+    return component_controller.delete_component(component_id)
+

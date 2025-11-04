@@ -3,8 +3,17 @@ from routes.component import router
 import uvicorn
 import os
 from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["https://localhost:5173", "https://192.168.1.180:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 COMPONENT_PHOTOS_DIR = os.path.join(BASE_DIR, "static", "components_photos")

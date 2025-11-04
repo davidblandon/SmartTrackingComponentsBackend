@@ -1,4 +1,6 @@
 from pydantic import BaseModel, Field
+from utils.nature import NatureEnum
+from datetime import date, datetime
 
 '''
     COMPONENT ATTRIBUTES
@@ -6,17 +8,33 @@ from pydantic import BaseModel, Field
     - self.name - str - name of the product
     - self.photo - str - direction of photo of the product
     - self.qr_filename - str - qr of the product
+    - self.nature - NatureEnum - nature of the product
+    - self.operating_hours - float - operating hours of the product
+    - self.commissioning_date - datetime - commissioning date of the product
+    - self.decommissioning_date - datetime - decommissioning date of the product
 '''
+
+
 
 
 class Component(BaseModel): 
     name: str
     photo: str            
-    component_qr: str = ""    
+    component_qr: str = ""
+    nature: NatureEnum 
+    operating_hours: float = 0.0
+    commissioning_date: datetime = None
+    decommissioning_date: datetime = None
+
+
+
+
 
     class Config:
         orm_mode = True
 
+def get_Cars(self):
+    pass
 
     def get_id(self):
         return self.component_id
@@ -29,5 +47,30 @@ class Component(BaseModel):
     
     def get_qr_filename(self):
         return self.qr_filename
+    
+    def get_nature(self):
+        return self.nature  
+    
+    def get_operating_hours(self):
+        return self.operating_hours 
+    
+    def get_commissioning_date(self):
+        return self.commissioning_date
+    
+    def get_decommissioning_date(self):
+        return self.decommissioning_date
+    
+    def set_decommissioning_date(self, decommissioning_date: datetime):
+        self.decommissioning_date = datetime.utcnow()
+
+    def set_commissioning_date(self, commissioning_date: datetime):
+        self.commissioning_date = datetime.utcnow()
+
+    def set_name(self, name: str):
+        self.name = name
+
+    def set_photo_path(self, photo: str):
+        self.photo = photo  
+
 
 
