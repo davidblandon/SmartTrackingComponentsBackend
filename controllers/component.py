@@ -122,6 +122,13 @@ def update_component(
     
 
 def delete_component(component_id: str):
+    try:
+        component_doc = component_collection.find_one({"_id": ObjectId(component_id)})
+
+    except:
+        raise HTTPException(status_code=400, detail="Invalid component ID format")
+    
+    os.remove(component_doc["photo"])     
     result = component_collection.delete_one({"_id": ObjectId(component_id)})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Component not found")

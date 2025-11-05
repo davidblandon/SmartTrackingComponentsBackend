@@ -8,7 +8,16 @@ from datetime import date, datetime
     - self.name - str - name of the product
     - self.photo - str - direction of photo of the product
     - self.qr_filename - str - qr of the product
-    - self.nature - NatureEnum - nature of the product
+    - self.nature - NatureEnum - nature of the product between [BMS,VCU,DC_dc,Chargeur,Boite_de_jonction,Module_de_batterie,Groupe_moteur_onduleur,moteur,Onduleur]
+    DC_dc = "DC/dc"
+    Chargeur = "Chargeur"
+    Boite_de_jonction = "Boite de jonction"
+    Module_de_batterie = "Module de batterie"
+    Groupe_moteur_onduleur = "Groupe moteur-onduleur"
+    moteur = "moteur"
+    Onduleur = "Onduleur"
+
+ ]
     - self.operating_hours - float - operating hours of the product
     - self.commissioning_date - datetime - commissioning date of the product
     - self.decommissioning_date - datetime - decommissioning date of the product
@@ -33,8 +42,8 @@ class Component(BaseModel):
     class Config:
         orm_mode = True
 
-def get_Cars(self):
-    pass
+    def get_Cars(self):
+        pass
 
     def get_id(self):
         return self.component_id
