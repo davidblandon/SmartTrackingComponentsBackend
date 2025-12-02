@@ -7,8 +7,9 @@ It handles QR code generation, reading, and storage for each tracked component i
 
 ## 📚 Table of Contents
 - [🛠️ Installation & Execution](#️-installation--execution)  
-- [🗂️ Project Structure](#️-project-structure)  
+- [🗂️ Project Structure](#️-project-structure)
 - [🌍 Environment Variables](#-environment-variables)  
+- [🗄️ Running MongoDB Locally with Docker](#️-running-mongodb-locally-with-docker)    
 - [💻 Useful Commands](#-useful-commands)  
 - [📘 API Documentation](#-api-documentation)  
 - [👥 Credits](#-credits)
@@ -26,12 +27,14 @@ git clone https://github.com/davidblandon/SmartTrackingComponentsBackend.git
 
 #### 🪟 Windows
 ```bash
+cd ..
 python -m venv venv
 venv\Scripts\activate
 ```
 
 #### 🐧 macOS / Linux
 ```bash
+cd ..
 python3 -m venv venv
 source venv/bin/activate
 ```
@@ -82,6 +85,7 @@ ENV/
 
 #### Development mode (HTTP)
 ```bash
+cd app
 uvicorn main:app --host 0.0.0.0 --port 8000 --ssl-keyfile=certs/key.pem --ssl-certfile=certs/cert.pem
 
 ```
@@ -147,6 +151,80 @@ Custom actions are added clearly:
 ✅ `GET /qr/all`, `POST /qr/create`, `POST /qr/read`
 
 ---
+## 🥭 Running MongoDB Locally with Docker
+To avoid SSL, firewall, or external network issues, you can run a local MongoDB instance using Docker.
+This is the recommended setup for development.
+
+### 1️⃣ Requirements
+
+- **Docker Desktop (Windows/macOS)**
+- **Docker Engine (Linux)**
+
+Verify installation:
+
+```bash
+docker --version
+```
+
+### 2️⃣ Create a docker-compose.yml file
+
+Place this file at the root of the project:
+
+```bash
+services:
+  mongo:
+    image: mongo:6.0
+    container_name: sct_mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"      
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+    volumes:
+      - mongo_data:/data/db  
+volumes:
+  mongo_data:
+```
+
+This will:
+
+✔ Start MongoDB locally
+✔ Expose port 27017
+✔ Use username/password → root / root
+✔ Persist data inside mongo_data/
+
+### 3️⃣ Start MongoDB
+
+```bash
+docker compose up -d
+```
+
+Check status:
+```bash
+docker ps
+```
+
+You should see:
+```bash
+sct_mongo   mongo:6   Up   0.0.0.0:27017->27017/tcp
+```
+
+### 4️⃣ Configure your .env to use local MongoDB
+
+In the .env you should have:
+
+```bash
+MONGO_URI=mongodb://root:root@localhost:27017/
+```
+
+and in the database folder, in database:
+
+```bash
+MONGO_DB=smart_component_tracking
+```
+Your FastAPI backend will now connect to your local Mongo container.
+
 
 ## 💻 Useful Commands
 

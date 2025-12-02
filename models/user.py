@@ -1,5 +1,6 @@
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
+from utils.user_type import RoleEnum
 
 '''
     USER ATTRIBUTES
@@ -10,6 +11,12 @@ from datetime import datetime
     - self.telephone - str - telephone of the user
 '''
 
+class UserCreate(BaseModel):
+    name: str
+    email: EmailStr
+    password: str
+    role: RoleEnum
+    telephone: str | None = None
 
 class User(BaseModel):
     id: str | None = None
@@ -17,7 +24,22 @@ class User(BaseModel):
     email: EmailStr
     role: str
     telephone: str | None = None
+    hashed_password: str
 
+class UserResponse(BaseModel):
+    id: str
+    name: str
+    email: EmailStr
+    role: RoleEnum
+    telephone: str | None = None
+
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
+    
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
 
     class Config:
         orm_mode = True

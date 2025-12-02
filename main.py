@@ -1,11 +1,12 @@
 from fastapi import FastAPI
-from routes.component import router
+from routes.component import router as component_router
+from routes.user import router as user_router
 import uvicorn
 import os
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 
-app = FastAPI()
+app = FastAPI(title="Smart Component Tracking")
 
 app.add_middleware(
     CORSMiddleware,
@@ -21,7 +22,8 @@ app.mount("/components_photos", StaticFiles(directory=COMPONENT_PHOTOS_DIR), nam
 
 app = FastAPI()
 
-app.include_router(router)
+app.include_router(component_router, prefix="/component", tags=["component"])
+app.include_router(user_router, prefix="/user", tags=["user"])
 
 @app.get("/")
 def read_root():

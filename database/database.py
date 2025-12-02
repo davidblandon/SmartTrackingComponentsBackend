@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 # Cargar variables desde .env
 load_dotenv()
 
+
 MONGO_URI = os.getenv("MONGO_URI")
 client = MongoClient(MONGO_URI)
 
