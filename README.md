@@ -173,7 +173,7 @@ Place this file at the root of the project:
 ```bash
 services:
   mongo:
-    image: mongo:6.0
+    image: mongo:7.0
     container_name: sct_mongo
     restart: unless-stopped
     ports:
@@ -224,6 +224,20 @@ and in the database folder, in database:
 MONGO_DB=smart_component_tracking
 ```
 Your FastAPI backend will now connect to your local Mongo container.
+
+### 5️⃣ Connect with Mongo Compass (For seeing the collections visually)
+
+Download Mongo compass:
+
+**https://www.mongodb.com/try/download/compass**
+
+Then after the installation, you should see **new connection**:
+
+- After clicking, you should see down an option called **Advanced connection options**
+
+- Then in **Authentication** you should put your username and password that you've defined in your **docker-compose.yml**
+
+
 
 
 ## 💻 Useful Commands
