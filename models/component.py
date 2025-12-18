@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field
 from utils.nature import NatureEnum
 from datetime import date, datetime
+from typing import Optional
 
 '''
     COMPONENT ATTRIBUTES
@@ -31,9 +32,10 @@ class Component(BaseModel):
     photo: str            
     component_qr: str = ""
     nature: NatureEnum 
-    operating_hours: float = 0.0
-    commissioning_date: datetime = None
-    decommissioning_date: datetime = None
+    operating_hours: Optional[float] = 0.0
+    commissioning_date: Optional[datetime] = None
+    decommissioning_date: Optional[datetime] = None
+    car_id: Optional[str] = None
 
 
 
@@ -80,6 +82,21 @@ class Component(BaseModel):
 
     def set_photo_path(self, photo: str):
         self.photo = photo  
+
+
+
+class ComponentResponse(BaseModel):
+    id: str
+    name: str
+    photo: str            
+    component_qr: str = ""
+    nature: NatureEnum 
+    operating_hours: Optional[float] = 0.0
+    commissioning_date: Optional[datetime] = None
+    decommissioning_date: Optional[datetime] = None
+    car_id: Optional[str] = None
+
+
 
 
 

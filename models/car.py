@@ -23,8 +23,6 @@ class Car(BaseModel):
     hours: float            
     owner: str = None
     nature: NatureEnum 
-    BMS: str = None
-    VCU: str = None
 
     class Config:
         orm_mode = True
@@ -41,3 +39,10 @@ class Car(BaseModel):
 
 
 
+
+class Car(BaseModel): 
+    id: str 
+    name: str
+    hours: float            
+    owner: str = None
+    nature: NatureEnum 

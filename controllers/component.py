@@ -4,7 +4,7 @@ import hashlib
 from fastapi import UploadFile, File, Form, HTTPException
 from database.collections import component_collection 
 from bson import ObjectId
-from models.component import Component
+from models.component import Component, ComponentResponse
 from typing import List
 from datetime import datetime
 from utils.nature import NatureEnum
@@ -17,43 +17,64 @@ PHOTOS_FOLDER = "static/components_photos/"
 os.makedirs(PHOTOS_FOLDER, exist_ok=True)
 
 
-def create_component(name: str, nature: NatureEnum, Uploaded_file=None) -> Component:
+def create_component(
+    name: str,
+    nature: NatureEnum,
+    uploaded_file: UploadFile = None,
+    operating_hours: float = 10.0,
+    commissioning_date: datetime = None,
+    decommissioning_date: datetime = None,
+    car_id: str = None
+) -> ComponentResponse:
 
-    if Uploaded_file:
-        photo_filename = Uploaded_file.filename
-        photo_path = os.path.join(PHOTOS_FOLDER, photo_filename)
-        with open(photo_path, "wb") as buffer:
-            buffer.write(Uploaded_file.file.read())
+    if not uploaded_file:
+        raise HTTPException(status_code=400, detail="Photo is required")
 
-    else:
-        return HTTPException(status_code=400, detail="Photo is required")
+    # Guardar la foto
+    photo_path = os.path.join(PHOTOS_FOLDER, uploaded_file.filename)
+    with open(photo_path, "wb") as buffer:
+        buffer.write(uploaded_file.file.read())
 
-    component_doc = {
-        "name": name,
-        "photo": photo_path,
-        "nature": nature,
-    }
-    result = component_collection.insert_one(component_doc)
-    component_id_str = str(result.inserted_id)
-
-
-    hash_object = hashlib.sha256(component_id_str.encode())
-    qr_hash = hash_object.hexdigest()
-
-
-    img = qrcode.make(qr_hash)
-    component_qr = qr_hash
-    qr_path = os.path.join(QR_FOLDER, component_qr + ".png")
-    img.save(qr_path)
-
-    component_collection.update_one(
-        {"_id": ObjectId(component_id_str)},
-        {"$set": {"component_qr": component_qr}}
+    # Crear instancia del modelo
+    component = Component(
+        name=name,
+        photo=photo_path,
+        nature=nature,
+        operating_hours=operating_hours,
+        commissioning_date=commissioning_date,
+        decommissioning_date=decommissioning_date,
+        car_id=car_id
     )
 
-    component_doc["id"] = component_id_str
-    component_doc["component_qr"] = component_qr
-    return Component(**component_doc)
+    # Convertir a dict para Mongo
+    component_dict = component.model_dump()
+    result = component_collection.insert_one(component_dict)
+    component_id_str = str(result.inserted_id)
+
+    # Generar QR
+    qr_hash = hashlib.sha256(component_id_str.encode()).hexdigest()
+    qr_path = os.path.join(QR_FOLDER, qr_hash + ".png")
+    qrcode.make(qr_hash).save(qr_path)
+
+    # Actualizar QR en Mongo
+    component_collection.update_one(
+        {"_id": ObjectId(component_id_str)},
+        {"$set": {"component_qr": qr_hash, "photo": photo_path}}
+    )
+
+    # Retornar respuesta
+    return ComponentResponse(
+        id=component_id_str,
+        name=component.name,
+        photo=photo_path,
+        component_qr=qr_hash,
+        nature=component.nature,
+        operating_hours=component.operating_hours,
+        commissioning_date=component.commissioning_date,
+        decommissioning_date=component.decommissioning_date,
+        car_id=component.car_id
+    )
+
 
 def get_component(component_qr: str) -> Component:
     component_doc = component_collection.find_one({"component_qr": component_qr})
@@ -77,7 +98,8 @@ def update_component(
     operating_hours: Optional[float] = Form(None), 
     commissioning_date: Optional[datetime] = Form(None), 
     decommissioning_date: Optional[datetime] = Form(None),
-    uploaded_file: Optional[Union[UploadFile, str]] = File(None) 
+    uploaded_file: Optional[Union[UploadFile, str]] = File(None),
+    car_id: Optional[str] = Form(None)
 ):
     component_doc = component_collection.find_one({"_id": ObjectId(component_id)}) 
 
@@ -109,6 +131,9 @@ def update_component(
             
     if decommissioning_date is not None: 
         update_data["decommissioning_date"] = decommissioning_date 
+
+    if car_id is not None:
+        update_data["car_id"] = car_id
             
     if update_data: 
         component_collection.update_one({"_id": ObjectId(component_id)}, {"$set": update_data}) 
@@ -129,6 +154,9 @@ def delete_component(component_id: str):
         raise HTTPException(status_code=400, detail="Invalid component ID format")
     
     os.remove(component_doc["photo"])     
+    os.remove(f"static/qrcodes/{component_doc['component_qr']}.png") 
+
+     
     result = component_collection.delete_one({"_id": ObjectId(component_id)})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Component not found")

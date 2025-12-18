@@ -86,8 +86,14 @@ ENV/
 #### Development mode (HTTP)
 ```bash
 cd app
-uvicorn main:app --host 0.0.0.0 --port 8000 --ssl-keyfile=certs/key.pem --ssl-certfile=certs/cert.pem
+uvicorn main:app --host 0.0.0.0 --port 8000 --ssl-keyfile=certs/key.pem --ssl-certfile=certs/cert.pem 
 
+```
+
+or if you want to develop new features i recommend you this for the automatic reload : 
+```bash
+cd app
+uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
 Open your browser at:  
