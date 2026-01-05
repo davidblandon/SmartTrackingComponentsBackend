@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field
 from datetime import date, datetime
+from typing import Optional
 
 '''
     SESSION ATTRIBUTES
@@ -18,11 +19,10 @@ from datetime import date, datetime
 
 class Session(BaseModel): 
     heures: float
-    date: datetime = None
     circuit: str
     climat: str 
     notes: str = ""
-    car: str
+    car_id: str
 
 
     class Config:
@@ -36,6 +36,13 @@ class SessionResponse(BaseModel):
     circuit: str
     climat: str 
     notes: str = ""
-    car: str
+    car_id: str
 
     
+
+
+class SessionUpdate(BaseModel):
+    heures: Optional[float] = None
+    circuit: Optional[str] = None
+    climat: Optional[str] = None
+    notes: Optional[str] = None

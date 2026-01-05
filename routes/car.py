@@ -17,7 +17,7 @@ router = APIRouter()
 def create_car_route(name : str,current_user: User = Depends(role_required([RoleEnum.admin]))):
     return car_controller.create_car(name)
 
-@router.get("/cars", response_model=List[Car])
+@router.get("/all", response_model=List[Car])
 def get_all_cars(current_user: User = Depends(role_required([RoleEnum.admin]))):
     cars_list = car_controller.get_all_cars()
     
@@ -26,7 +26,7 @@ def get_all_cars(current_user: User = Depends(role_required([RoleEnum.admin]))):
     
     return cars_list
 
-@router.get("/car/{car_qr}")
+@router.get("/{car_qr}")
 def get_car_route(car_qr: str):
     car_new = car_controller.get_car(car_qr)
     if not car_new:
@@ -48,6 +48,6 @@ def update_car_route(car_id: str,
 def delete_car_route(car_id: str, current_user: User = Depends(role_required([RoleEnum.admin]))):
     return car_controller.delete_car(car_id)
 
-@router.get("/car/{car_id}/components", response_model=List[ComponentResponse])
+@router.get("/{car_id}/components", response_model=List[ComponentResponse])
 def get_components_route(car_id: str, current_user: User = Depends(role_required([RoleEnum.admin, RoleEnum.client]))):
     return car_controller.get_coponents(car_id)
