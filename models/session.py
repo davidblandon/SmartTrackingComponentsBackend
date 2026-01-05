@@ -28,3 +28,14 @@ class Session(BaseModel):
     class Config:
         orm_mode = True
 
+
+class SessionResponse(BaseModel):
+    id: str
+    heures: float
+    date: datetime = None
+    circuit: str
+    climat: str 
+    notes: str = ""
+    car: str
+
+    

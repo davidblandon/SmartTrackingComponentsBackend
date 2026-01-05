@@ -4,7 +4,8 @@ from typing import List
 from controllers import user as user_controller
 from models.user import UserCreate, UserResponse, User, TokenResponse
 from fastapi.security import OAuth2PasswordRequestForm
-from utils.security import admin_required
+from utils.security import role_required
+from utils.user_type import RoleEnum
 
 
 router = APIRouter()
@@ -14,7 +15,7 @@ router = APIRouter()
 
 
 @router.post("/create", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
-def create_user(user_in: UserCreate, admin: User = Depends(admin_required)):
+def create_user(user_in: UserCreate, current_user: User = Depends(role_required(RoleEnum.admin))):
     """
     Create a new user. Only accessible by users with role 'admin'.
     """

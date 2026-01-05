@@ -4,6 +4,7 @@ from database.collections import user_collection
 from utils.user_security import decode_access_token
 from fastapi.security import OAuth2PasswordBearer
 from models.user import User
+from typing import List
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="user/login")  
 
@@ -30,8 +31,19 @@ def get_current_user_from_token(token: str = Depends(oauth2_scheme)) -> User:
         hashed_password=user_doc.get("hashed_password"),
     )
 
-def admin_required(current_user: User = Depends(get_current_user_from_token)) -> User:
-    if current_user.role != RoleEnum.admin.value and current_user.role != RoleEnum.admin:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin privilege required")
-    return current_user
+def role_required(allowed_roles: List[RoleEnum]):
+    if isinstance(allowed_roles, str):
+        allowed_roles = [allowed_roles]
 
+    def dependency(current_user: User = Depends(get_current_user_from_token)) -> User:
+        user_role = current_user.role.value if isinstance(current_user.role, RoleEnum) else current_user.role
+
+        if user_role not in allowed_roles:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Insufficient privileges"
+            )
+
+        return current_user
+
+    return dependency

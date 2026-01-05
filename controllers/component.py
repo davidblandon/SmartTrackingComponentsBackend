@@ -22,7 +22,7 @@ def create_component(
     name: str,
     nature: NatureEnum,
     uploaded_file: UploadFile = None,
-    operating_hours: float = 10.0,
+    operating_hours: float = 0.0,
     commissioning_date: datetime = None,
     decommissioning_date: datetime = None,
     car_id: str = None

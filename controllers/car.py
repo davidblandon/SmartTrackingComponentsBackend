@@ -2,9 +2,10 @@ import os
 import qrcode
 import hashlib
 from fastapi import Form, HTTPException
-from database.collections import car_collection 
+from database.collections import car_collection, component_collection
 from bson import ObjectId
 from models.car import Car, CarResponse
+from models.component import ComponentResponse
 from typing import List
 from typing import Optional
 
@@ -120,3 +121,21 @@ def delete_car(car_id: str):
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Car not found")
     return {"detail": "Car deleted successfully"}
+
+def get_coponents(car_id: str)-> List[ComponentResponse]:
+    # Validar que el carro exista 
+    car = car_collection.find_one({"_id": ObjectId(car_id)}) 
+
+    if not car: 
+        raise HTTPException(status_code=404, detail="Car not found") 
+    
+    # Buscar componentes asociados 
+    components_cursor = component_collection.find({"car_id": car_id}) 
+
+    components = [] 
+    for comp in components_cursor: 
+        comp["id"] = str(comp["_id"]) 
+        del comp["_id"] 
+        components.append(comp) 
+        
+    return components

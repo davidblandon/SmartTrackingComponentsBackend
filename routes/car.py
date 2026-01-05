@@ -4,19 +4,21 @@ from typing import List,Optional
 from fastapi import UploadFile, File, Form
 from controllers import car as car_controller
 from fastapi import Form
-from utils.security import admin_required
+from utils.security import role_required
+from utils.user_type import RoleEnum
 from models.user import User
+from models.component import ComponentResponse
 
 router = APIRouter()
 
 
 
 @router.post("/create/", response_model=CarResponse, status_code=status.HTTP_201_CREATED)
-def create_car_route(name : str,admin: User = Depends(admin_required)):
+def create_car_route(name : str,current_user: User = Depends(role_required([RoleEnum.admin]))):
     return car_controller.create_car(name)
 
 @router.get("/cars", response_model=List[Car])
-def get_all_cars(admin: User = Depends(admin_required)):
+def get_all_cars(current_user: User = Depends(role_required([RoleEnum.admin]))):
     cars_list = car_controller.get_all_cars()
     
     if not cars_list:
@@ -37,11 +39,15 @@ def update_car_route(car_id: str,
     name: Optional[str] = Form(None), 
     hours: Optional[float] = Form(None),    
     owner: Optional[str] = Form(None),
-    admin: User = Depends(admin_required)):
+    current_user: User = Depends(role_required([RoleEnum.admin]))):
 
 
     return car_controller.update_car(car_id,name, hours, owner)
 
 @router.delete("/delete/{car_id}")
-def delete_car_route(car_id: str, admin: User = Depends(admin_required)):
+def delete_car_route(car_id: str, current_user: User = Depends(role_required([RoleEnum.admin]))):
     return car_controller.delete_car(car_id)
+
+@router.get("/car/{car_id}/components", response_model=List[ComponentResponse])
+def get_components_route(car_id: str, current_user: User = Depends(role_required([RoleEnum.admin, RoleEnum.client]))):
+    return car_controller.get_coponents(car_id)

@@ -83,7 +83,7 @@ ENV/
 ```
 ### 5️⃣ Run the server
 
-#### Development mode (HTTP)
+#### Development mode (HTTPS)
 ```bash
 cd app
 uvicorn main:app --host 0.0.0.0 --port 8000 --ssl-keyfile=certs/key.pem --ssl-certfile=certs/cert.pem 
