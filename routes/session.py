@@ -16,7 +16,7 @@ def create_session_route(session: Session,current_user: User = Depends(role_requ
 def get_sessions_for_car(car_id: str,current_user: User = Depends(role_required([RoleEnum.admin, RoleEnum.client]))):
     return get_sessions_by_car(car_id)
 
-@router.put("update/{session_id}",response_model=SessionResponse)
+@router.put("/update/{session_id}",response_model=SessionResponse)
 def update_session_route(session_id: str,data: SessionUpdate,current_user: User = Depends(role_required([RoleEnum.admin, RoleEnum.client]))):
     return update_session(session_id, data)
 
