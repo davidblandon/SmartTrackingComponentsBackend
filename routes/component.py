@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException, UploadFile, File, Depends, status
-from models.component import Component, ComponentResponse
+from models.component import Component, ComponentResponse, AssignComponentRequest
 from typing import List,Optional, Union
 from fastapi import UploadFile, File, Form
 from controllers import component as component_controller
@@ -33,7 +33,7 @@ def get_component_route(component_qr: str):
         raise HTTPException(status_code=404, detail="Component not found")
     return component_new
 
-@router.put("/component/{component_id}")
+@router.put("/update/{component_id}")
 def update_component_route(component_id: str,
     name: Optional[str] = Form(None), 
     nature: Optional[NatureEnum] = Form(None), 
@@ -46,7 +46,13 @@ def update_component_route(component_id: str,
 
     return component_controller.update_component(component_id,name, nature, operating_hours, commissioning_date, decommissioning_date, uploaded_file)
 
-@router.delete("/component/{component_id}")
+@router.delete("/delete/{component_id}")
 def delete_component_route(component_id: str,admin: User = Depends(admin_required)):
     return component_controller.delete_component(component_id)
 
+@router.post("/assingn-component/")
+def assign_component(data: AssignComponentRequest):
+    return component_controller.assign_component_to_car(
+        car_qr=data.car_qr,
+        component_qr=data.component_qr
+    )

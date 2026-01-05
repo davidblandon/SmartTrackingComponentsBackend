@@ -9,11 +9,12 @@ from typing import List
 from datetime import datetime
 from utils.nature import NatureEnum
 from typing import Optional, Union
+from database.collections import car_collection
 
-QR_FOLDER = "static/qrcodes/"
+QR_FOLDER = "static/components/qrcodes/"
 os.makedirs(QR_FOLDER, exist_ok=True)
 
-PHOTOS_FOLDER = "static/components_photos/"
+PHOTOS_FOLDER = "static/components/photos/"
 os.makedirs(PHOTOS_FOLDER, exist_ok=True)
 
 
@@ -154,10 +155,45 @@ def delete_component(component_id: str):
         raise HTTPException(status_code=400, detail="Invalid component ID format")
     
     os.remove(component_doc["photo"])     
-    os.remove(f"static/qrcodes/{component_doc['component_qr']}.png") 
+    os.remove(f"static/components/qrcodes/{component_doc['component_qr']}.png") 
 
      
     result = component_collection.delete_one({"_id": ObjectId(component_id)})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Component not found")
     return {"detail": "Component deleted successfully"}
+
+def assign_component_to_car(car_qr: str, component_qr: str):
+    # 1️⃣ Buscar carro
+    car = car_collection.find_one({"car_qr": car_qr})
+    if not car:
+        raise HTTPException(status_code=404, detail="Car not found")
+
+    # 2️⃣ Buscar componente
+    component = component_collection.find_one({"component_qr": component_qr})
+    if not component:
+        raise HTTPException(status_code=404, detail="Component not found")
+
+    # 3️⃣ Validar si ya está asignado
+    if component.get("car_id"):
+        raise HTTPException(
+            status_code=400,
+            detail="Component is already assigned to a car"
+        )
+
+    # 4️⃣ Asignar componente
+    component_collection.update_one(
+        {"_id": component["_id"]},
+        {
+            "$set": {
+                "car_id": str(car["_id"]),
+                "commissioning_date": datetime.utcnow()
+            }
+        }
+    )
+
+    return {
+        "message": "Component successfully assigned to car",
+        "component_id": str(component["_id"]),
+        "car_id": str(car["_id"])
+    }

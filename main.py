@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from routes.component import router as component_router
 from routes.user import router as user_router
+from routes.car import router as car_router
 import uvicorn
 import os
 from fastapi.staticfiles import StaticFiles
@@ -17,13 +18,12 @@ app.add_middleware(
 )
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-COMPONENT_PHOTOS_DIR = os.path.join(BASE_DIR, "static", "components_photos")
-app.mount("/components_photos", StaticFiles(directory=COMPONENT_PHOTOS_DIR), name="components_photos")
 
 app = FastAPI()
 
 app.include_router(component_router, prefix="/component", tags=["component"])
 app.include_router(user_router, prefix="/user", tags=["user"])
+app.include_router(car_router, prefix="/car", tags=["car"])
 
 @app.get("/")
 def read_root():

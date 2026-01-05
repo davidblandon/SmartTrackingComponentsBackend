@@ -97,6 +97,7 @@ class ComponentResponse(BaseModel):
     car_id: Optional[str] = None
 
 
-
-
+class AssignComponentRequest(BaseModel):
+    car_qr: str
+    component_qr: str
 

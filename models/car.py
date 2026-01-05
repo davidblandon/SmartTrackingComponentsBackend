@@ -1,3 +1,4 @@
+from typing import Optional
 from pydantic import BaseModel, Field
 from utils.nature import NatureEnum
 from datetime import date, datetime
@@ -9,7 +10,7 @@ from database.collections import car_collection
     - self.name - str - name of the car
     - self.hours - float - operating hours of the car
     - self.owner - str - id of the owner of the car
-    - self.nature - NatureEnum - nature of the car
+
     - self.BMS - str - BMS component id
     - self.VCU - str - VCU component id
 
@@ -20,9 +21,10 @@ from database.collections import car_collection
 
 class Car(BaseModel): 
     name: str
-    hours: float            
-    owner: str = None
-    nature: NatureEnum 
+    hours: Optional[float]            
+    owner: Optional[str] = None
+    car_qr: str = ""
+
 
     class Config:
         orm_mode = True
@@ -40,9 +42,10 @@ class Car(BaseModel):
 
 
 
-class Car(BaseModel): 
+class CarResponse(BaseModel): 
     id: str 
     name: str
-    hours: float            
-    owner: str = None
-    nature: NatureEnum 
+    hours: Optional[float]            
+    owner: Optional[str] = None
+    car_qr: str 
+
