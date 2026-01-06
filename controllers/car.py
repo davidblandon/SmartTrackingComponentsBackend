@@ -87,7 +87,7 @@ def get_car(car_qr: str) -> Car:
     hours=car_doc["hours"],            
     photo_path=car_doc["photo_path"],
     owner=owner,
-    car_qr=f"static/cars/qrcodes/{car_doc['car_qr']}" + ".png" )
+    car_qr=car_doc['car_qr']
 
 
 def get_all_cars() -> List[Car]:
@@ -101,7 +101,7 @@ def get_all_cars() -> List[Car]:
     hours=car_doc["hours"],            
     photo_path=car_doc["photo_path"],
     owner=owner,
-    car_qr=f"static/cars/qrcodes/{car_doc['car_qr']}" + ".png" )) 
+    car_qr=car_doc['car_qr']"
         
     print(cars_list)
         
