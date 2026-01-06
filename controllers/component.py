@@ -21,8 +21,8 @@ os.makedirs(PHOTOS_FOLDER, exist_ok=True)
 def create_component(
     name: str,
     nature: NatureEnum,
-    uploaded_file: UploadFile = None,
-    operating_hours: float = 0.0,
+    uploaded_file: UploadFile,
+    operating_hours: float,
     commissioning_date: datetime = None,
     decommissioning_date: datetime = None,
     car_id: str = None

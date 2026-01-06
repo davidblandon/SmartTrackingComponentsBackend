@@ -107,6 +107,23 @@ def get_all_cars() -> List[Car]:
         
     return cars_list
 
+def get_cars_by_owner(owner_id: str) -> List[Car]:
+    cars_list = []
+
+    for car_doc in car_collection.find({"owner_id": owner_id}):
+        car_doc["id"] = str(car_doc["_id"])
+        owner = user_collection.find_one({"_id": ObjectId(car_doc["owner_id"])})["name"] 
+        cars_list.append(CarResponse(id=car_doc["id"],
+    name=car_doc["name"],
+    hours=car_doc["hours"],            
+    photo_path=car_doc["photo_path"],
+    owner=owner,
+    car_qr=car_doc['car_qr']))
+
+    print(cars_list)
+        
+    return cars_list
+
 def update_car(
     car_id: str,
     name: Optional[str] = Form(None), 

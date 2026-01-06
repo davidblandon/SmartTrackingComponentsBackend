@@ -13,7 +13,7 @@ app = FastAPI(title="Smart Component Tracking")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://localhost:5173", "https://192.168.1.180:5173"],
+    allow_origins=["https://localhost:5173", "https://192.168.1.180:5173", "https://10.185.16.26:5173", "https://10.184.45.26:5173"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

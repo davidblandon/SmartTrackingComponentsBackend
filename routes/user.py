@@ -26,7 +26,7 @@ def create_user(user_in: UserCreate, current_user: User = Depends(role_required(
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     
 
-@router.post("/login", response_model=TokenResponse, status_code=status.HTTP_200_OK)
+@router.post("/login", response_model=UserResponse, status_code=status.HTTP_200_OK)
 def login(form_data: OAuth2PasswordRequestForm = Depends()):
     return user_controller.login_user(form_data)
 

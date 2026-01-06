@@ -18,8 +18,11 @@ def create_car_route( name: str,hours: float,owner_id: str,uploaded_file: Upload
     return car_controller.create_car(name,hours,owner_id,uploaded_file)
 
 @router.get("/all", response_model=List[CarResponse])
-def get_all_cars(current_user: User = Depends(role_required([RoleEnum.admin]))):
-    cars_list = car_controller.get_all_cars()
+def get_all_cars(current_user: User = Depends(role_required([RoleEnum.admin, RoleEnum.client, RoleEnum.technician]))):
+    if current_user.role == RoleEnum.admin or current_user.role == RoleEnum.technician:
+        cars_list = car_controller.get_all_cars()
+    else:
+        cars_list = car_controller.get_cars_by_owner(current_user.id)
 
     print(cars_list)
     
