@@ -18,7 +18,7 @@ router = APIRouter()
 def create_component_route(name : str, nature: NatureEnum ,Uploaded_file: UploadFile = File(...),current_user: User = Depends(role_required(RoleEnum.admin))):
     return component_controller.create_component(name, nature, Uploaded_file)
 
-@router.get("/all", response_model=List[Component])
+@router.get("/all", response_model=List[ComponentResponse])
 def get_all_components(current_user: User = Depends(role_required([RoleEnum.admin]))):
     components_list = component_controller.get_all_components()
     

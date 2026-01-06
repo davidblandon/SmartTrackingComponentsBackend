@@ -8,7 +8,7 @@ import uvicorn
 import os
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
-
+from fastapi.staticfiles import StaticFiles 
 app = FastAPI(title="Smart Component Tracking")
 
 app.add_middleware(
@@ -19,7 +19,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+STATIC_DIR = os.path.join(BASE_DIR, "static") 
+
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+
 
 app.include_router(component_router, prefix="/component", tags=["component"])
 app.include_router(user_router, prefix="/user", tags=["user"])

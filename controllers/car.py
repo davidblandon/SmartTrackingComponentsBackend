@@ -80,14 +80,31 @@ def get_car(car_qr: str) -> Car:
     if not car_doc:
         return None
     car_doc["id"] = str(car_doc["_id"])
-    return Car(**car_doc)
+    owner = user_collection.find_one({"_id": ObjectId(car_doc["owner_id"])})["name"]    
+
+    return CarResponse(    id=car_doc["id"],
+    name=car_doc["name"],
+    hours=car_doc["hours"],            
+    photo_path=car_doc["photo_path"],
+    owner=owner,
+    car_qr=f"static/cars/qrcodes/{car_doc['car_qr']}" + ".png" )
+
 
 def get_all_cars() -> List[Car]:
     cars_list = []
-    for car_doc in car_collection.find():
-        car_doc["id"] = str(car_doc["_id"])  
-        cars_list.append(Car(**car_doc))
 
+    for car_doc in car_collection.find():
+        car_doc["id"] = str(car_doc["_id"])
+        owner = user_collection.find_one({"_id": ObjectId(car_doc["owner_id"])})["name"] 
+        cars_list.append(CarResponse(id=car_doc["id"],
+    name=car_doc["name"],
+    hours=car_doc["hours"],            
+    photo_path=car_doc["photo_path"],
+    owner=owner,
+    car_qr=f"static/cars/qrcodes/{car_doc['car_qr']}" + ".png" )) 
+        
+    print(cars_list)
+        
     return cars_list
 
 def update_car(

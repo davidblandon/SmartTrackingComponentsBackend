@@ -17,9 +17,11 @@ router = APIRouter()
 def create_car_route( name: str,hours: float,owner_id: str,uploaded_file: UploadFile = File(...),current_user: User = Depends(role_required([RoleEnum.admin]))):
     return car_controller.create_car(name,hours,owner_id,uploaded_file)
 
-@router.get("/all", response_model=List[Car])
+@router.get("/all", response_model=List[CarResponse])
 def get_all_cars(current_user: User = Depends(role_required([RoleEnum.admin]))):
     cars_list = car_controller.get_all_cars()
+
+    print(cars_list)
     
     if not cars_list:
         raise HTTPException(status_code=404, detail="No cars found")
