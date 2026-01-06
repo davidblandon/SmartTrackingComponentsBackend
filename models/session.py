@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from datetime import date, datetime
+from datetime import datetime
 from typing import Optional
 
 '''
@@ -32,7 +32,7 @@ class Session(BaseModel):
 class SessionResponse(BaseModel):
     id: str
     heures: float
-    date: datetime = None
+    session_date: datetime = None
     circuit: str
     climat: str 
     notes: str = ""

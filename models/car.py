@@ -22,7 +22,8 @@ from database.collections import car_collection
 class Car(BaseModel): 
     name: str
     hours: Optional[float]            
-    owner: Optional[str] = None
+    owner_id: Optional[str] = None
+    photo_path: Optional[str] = None
     car_qr: str = ""
 
 
@@ -46,6 +47,7 @@ class CarResponse(BaseModel):
     id: str 
     name: str
     hours: Optional[float]            
+    photo_path: Optional[str] = None
     owner: Optional[str] = None
     car_qr: str 
 

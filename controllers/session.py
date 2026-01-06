@@ -13,7 +13,7 @@ def create_session(session: Session) -> SessionResponse:
         raise HTTPException(status_code=404, detail="Car not found")
 
     # 2️⃣ Fecha por defecto
-    session_date = datetime.utcnow()
+    session_date = datetime.now()
 
     session_dict = {
         "heures": session.heures,
@@ -150,3 +150,4 @@ def get_all_sessions() -> List[SessionResponse]:
 
 
     return sessions_list
+

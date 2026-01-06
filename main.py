@@ -3,6 +3,7 @@ from routes.component import router as component_router
 from routes.user import router as user_router
 from routes.car import router as car_router
 from routes.session import router as session_router
+from routes.maintenance import router as maintenance_router
 import uvicorn
 import os
 from fastapi.staticfiles import StaticFiles
@@ -24,6 +25,7 @@ app.include_router(component_router, prefix="/component", tags=["component"])
 app.include_router(user_router, prefix="/user", tags=["user"])
 app.include_router(car_router, prefix="/car", tags=["car"])
 app.include_router(session_router, prefix="/session", tags=["session"])
+app.include_router(maintenance_router, prefix="/maintenance", tags=["maintenance"])
 
 @app.get("/")
 def read_root():

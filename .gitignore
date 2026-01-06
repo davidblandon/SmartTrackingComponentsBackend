@@ -8,3 +8,5 @@
 /schemas/__pycache__/
 /utils/__pycache__/
 /static/
+/.env/
+/env/

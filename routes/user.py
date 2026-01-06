@@ -30,3 +30,6 @@ def create_user(user_in: UserCreate, current_user: User = Depends(role_required(
 def login(form_data: OAuth2PasswordRequestForm = Depends()):
     return user_controller.login_user(form_data)
 
+@router.get("/client/all", response_model=List[UserResponse], status_code=status.HTTP_200_OK)
+def get_all_clients_route(current_user: User = Depends(role_required(RoleEnum.admin))):
+    return user_controller.get_all_clients()

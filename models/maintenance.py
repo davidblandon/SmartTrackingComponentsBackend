@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field
-from datetime import date, datetime
+from datetime import datetime
+from typing import Optional
 
 '''
     MAINTENANCE ATTRIBUTES
@@ -17,13 +18,13 @@ from datetime import date, datetime
 
 
 class Maintenance(BaseModel): 
-    date: datetime = None
     type: str
-    technician: str 
+    technician_id: str 
     notes: str = ""
     files: str = ""
-    car: str = ""
-    components: str
+    car_id: str = ""
+    maintenance_date: datetime = None
+
 
 
     class Config:
@@ -31,3 +32,20 @@ class Maintenance(BaseModel):
 
 
 
+class MaintenanceResponse(BaseModel):
+    id: str
+    maintenance_date: datetime
+    type: str
+    technician_id: str 
+    notes: str
+    files: str
+    car_id: str
+
+
+    class Config:
+        orm_mode = True
+
+
+class MaintenanceUpdate(BaseModel):
+    type: Optional[str] = None
+    notes: Optional[str] = None

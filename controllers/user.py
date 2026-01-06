@@ -67,3 +67,17 @@ def login_user(form_data: OAuth2PasswordRequestForm = Depends()):
     token = create_access_token(user.email)
 
     return {"access_token": token, "token_type": "bearer"}
+
+def get_all_clients():
+    clients_list = []
+    for user_doc in user_collection.find({"role": "client"}):
+        user_doc["id"] = str(user_doc["_id"])  
+        clients_list.append(UserResponse(
+            id=user_doc["id"],
+            name=user_doc["name"],
+            email=user_doc["email"],
+            role=user_doc["role"],
+            telephone=user_doc.get("telephone")
+        ))
+
+    return clients_list

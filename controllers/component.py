@@ -82,7 +82,18 @@ def get_component(component_qr: str) -> Component:
     if not component_doc:
         return None
     component_doc["id"] = str(component_doc["_id"])
-    return Component(**component_doc)
+    return ComponentResponse(
+        id = component_doc["id"],
+        name = component_doc["name"],
+        photo = component_doc["photo"],
+        component_qr = component_doc["component_qr"],
+        nature = component_doc["nature"],
+        operating_hours = component_doc.get("operating_hours"),
+        commissioning_date = component_doc.get("commissioning_date"),
+        decommissioning_date = component_doc.get("decommissioning_date"),
+        car_id = component_doc.get("car_id")
+
+    )
 
 def get_all_components() -> List[Component]:
     components_list = []
@@ -147,18 +158,21 @@ def update_component(
 
     
 
-def delete_component(component_id: str):
+def delete_component(component_qr: str):
     try:
-        component_doc = component_collection.find_one({"_id": ObjectId(component_id)})
+        component_doc = component_collection.find_one({"component_qr": component_qr})
 
     except:
-        raise HTTPException(status_code=400, detail="Invalid component ID format")
+        raise HTTPException(status_code=400, detail="Invalid component QR format")
+    
+    if component_doc is None:
+        raise HTTPException(status_code=404, detail="Component not found")
     
     os.remove(component_doc["photo"])     
     os.remove(f"static/components/qrcodes/{component_doc['component_qr']}.png") 
 
      
-    result = component_collection.delete_one({"_id": ObjectId(component_id)})
+    result = component_collection.delete_one({"_id": ObjectId(component_doc["_id"])})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Component not found")
     return {"detail": "Component deleted successfully"}

@@ -14,8 +14,8 @@ router = APIRouter()
 
 
 @router.post("/create/", response_model=CarResponse, status_code=status.HTTP_201_CREATED)
-def create_car_route(name : str,current_user: User = Depends(role_required([RoleEnum.admin]))):
-    return car_controller.create_car(name)
+def create_car_route( name: str,hours: float,owner_id: str,uploaded_file: UploadFile = File(...),current_user: User = Depends(role_required([RoleEnum.admin]))):
+    return car_controller.create_car(name,hours,owner_id,uploaded_file)
 
 @router.get("/all", response_model=List[Car])
 def get_all_cars(current_user: User = Depends(role_required([RoleEnum.admin]))):
@@ -44,10 +44,11 @@ def update_car_route(car_id: str,
 
     return car_controller.update_car(car_id,name, hours, owner)
 
-@router.delete("/delete/{car_id}")
-def delete_car_route(car_id: str, current_user: User = Depends(role_required([RoleEnum.admin]))):
-    return car_controller.delete_car(car_id)
+@router.delete("/delete/{car_qr}")
+def delete_car_route(car_qr: str, current_user: User = Depends(role_required([RoleEnum.admin]))):
+    return car_controller.delete_car(car_qr)
 
 @router.get("/{car_id}/components", response_model=List[ComponentResponse])
 def get_components_route(car_id: str, current_user: User = Depends(role_required([RoleEnum.admin, RoleEnum.client]))):
     return car_controller.get_coponents(car_id)
+

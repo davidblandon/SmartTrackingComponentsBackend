@@ -15,7 +15,7 @@ router = APIRouter()
 
 
 @router.post("/create/", response_model=ComponentResponse, status_code=status.HTTP_201_CREATED)
-def create_component_route(name : str, nature: NatureEnum ,Uploaded_file: UploadFile = File(...),current_user: User = Depends(role_required([RoleEnum.admin]))):
+def create_component_route(name : str, nature: NatureEnum ,Uploaded_file: UploadFile = File(...),current_user: User = Depends(role_required(RoleEnum.admin))):
     return component_controller.create_component(name, nature, Uploaded_file)
 
 @router.get("/all", response_model=List[Component])
@@ -47,9 +47,9 @@ def update_component_route(component_id: str,
 
     return component_controller.update_component(component_id,name, nature, operating_hours, commissioning_date, decommissioning_date, uploaded_file)
 
-@router.delete("/delete/{component_id}")
-def delete_component_route(component_id: str,current_user: User = Depends(role_required([RoleEnum.admin]))):
-    return component_controller.delete_component(component_id)
+@router.delete("/delete/{component_qr}")
+def delete_component_route(component_qr: str,current_user: User = Depends(role_required([RoleEnum.admin]))):
+    return component_controller.delete_component(component_qr)
 
 @router.post("/assingn-component/")
 def assign_component(data: AssignComponentRequest, current_user: User = Depends(role_required([RoleEnum.admin]))):
